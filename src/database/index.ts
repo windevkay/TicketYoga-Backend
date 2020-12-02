@@ -17,6 +17,8 @@ export const connectDatabase = async (): Promise<Database> => {
 
         const db = client.db('primary');
 
+        console.log('Data connection established!');
+
         return {
             events: db.collection<EventEntity>('events'),
             tickets: db.collection<TicketEntity>('tickets'),
