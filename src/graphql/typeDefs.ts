@@ -27,7 +27,7 @@ export const typeDefs = gql`
     type Ticket {
         id: ID!
         event: Event!
-        owner: User
+        owner: User!
         price: Float!
         ticketCategory: TicketCategory!
         transferable: Boolean! #if the ticket can be resold or not
