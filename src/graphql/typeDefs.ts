@@ -36,6 +36,6 @@ export const typeDefs = gql`
         tradeStatus: TradeStatus! #if ticket is an original or a resale
     }
     type Query {
-        getTickets: String!
+        getTickets: [Ticket!]
     }
 `;
