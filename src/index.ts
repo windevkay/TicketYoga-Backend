@@ -17,7 +17,7 @@ const mount = async (app: Application) => {
 
     app.get('/', (req, res) => res.send('TicketYoga: checkout /api for playground'));
 
-    app.listen(port, () => console.log(`Backend server running on PORT: ${port}`));
+    app.listen(port, () => console.log(`Backend services running on PORT: ${port}`));
 };
 
 mount(express());

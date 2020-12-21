@@ -10,7 +10,7 @@ const tickets: TicketEntity[] = [
     {
         _id: new ObjectId('5d378db94e84754160e08b42'),
         event: new ObjectId('5d378db94e84753160e08b31'),
-        owner: new ObjectId('5d378db94e84753160e08b55'),
+        owner: '5d378db94e84753160e08b55',
         price: 25.0,
         ticketCategory: TicketCategory.REGULAR,
         transferable: true,
@@ -24,19 +24,30 @@ const events: EventEntity[] = [
     {
         _id: new ObjectId('5d378db94e84753160e08b31'),
         name: 'The Jones Event',
-        location: 'Calgary, Alberta, Canada',
+        details: 'details*****',
+        images: ['image*****'],
         date: '2020-12-25',
         maxAudience: 20,
-        eventAdmin: new ObjectId('5d378db94e84753160e08b55'),
-        tickets: null,
+        eventAdmin: '5d378db94e84753160e08b55',
+        tickets: [new ObjectId('5d378db94e84754160e08b42')],
+        price: 20,
+        address: 'address*****',
+        country: 'country*****',
+        admin: 'admin*****',
+        city: 'city*****',
     },
 ];
 const users: UserEntity[] = [
     {
         _id: '5d378db94e84753160e08b55',
-        firstname: 'James',
-        lastname: 'Jones',
+        token: 'token*****',
+        name: 'James Jones',
+        avatar: 'avatar*****',
+        contact: 'contact*****',
+        walletId: 'wallet*****',
+        income: 1000,
         events: [new ObjectId('5d378db94e84753160e08b31')],
+        tickets: [new ObjectId('5d378db94e84754160e08b42')],
     },
 ];
 

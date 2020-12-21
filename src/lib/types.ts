@@ -19,15 +19,20 @@ export interface Database {
 
 export interface UserEntity {
     _id: string;
-    firstname: string;
-    lastname: string;
+    token: string;
+    name: string;
+    avatar: string;
+    contact: string;
+    walletId?: string;
+    income: number;
     events: ObjectId[];
+    tickets: ObjectId[];
 }
 
 export interface TicketEntity {
     _id: ObjectId;
     event: ObjectId;
-    owner: ObjectId;
+    owner: string;
     price: number;
     ticketCategory: TicketCategory;
     transferable: boolean;
@@ -39,9 +44,15 @@ export interface TicketEntity {
 export interface EventEntity {
     _id: ObjectId;
     name: string;
-    location: string;
+    details: string;
+    images: string[];
     date: string;
     maxAudience: number;
-    eventAdmin: ObjectId;
-    tickets: ObjectId[] | null;
+    eventAdmin: string;
+    tickets: ObjectId[];
+    price: number;
+    address: string;
+    country: string;
+    admin: string;
+    city: string;
 }
