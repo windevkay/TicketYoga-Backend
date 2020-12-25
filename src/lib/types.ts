@@ -1,4 +1,15 @@
 import { Collection, ObjectId, MongoClient } from 'mongodb';
+import { people_v1 } from 'googleapis';
+
+export interface LoginArgs {
+    input: { code: string } | null;
+}
+
+export interface LoginResponse {
+    user: people_v1.Schema$Person;
+    googleAccessToken?: string;
+    googleRefreshToken?: string;
+}
 
 export enum TicketCategory {
     REGULAR = 'REGULAR',
@@ -17,6 +28,14 @@ export interface Database {
     client: MongoClient;
 }
 
+export interface Viewer {
+    _id?: string;
+    token?: string;
+    avatar?: string;
+    walletId?: string;
+    didRequest: boolean;
+}
+
 export interface UserEntity {
     _id: string;
     token: string;
@@ -27,6 +46,8 @@ export interface UserEntity {
     income: number;
     events: ObjectId[];
     tickets: ObjectId[];
+    googleAccessToken?: string;
+    googleRefreshToken?: string;
 }
 
 export interface TicketEntity {

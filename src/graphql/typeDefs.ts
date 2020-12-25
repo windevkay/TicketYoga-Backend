@@ -11,18 +11,23 @@ export const typeDefs = gql`
     }
     type User {
         id: ID!
-        firstname: String!
-        lastname: String!
+        token: String!
+        name: String!
+        avatar: String!
+        contact: String!
         events: [Event!]
+        tickets: [Ticket!]
     }
     type Event {
         id: ID!
         name: String!
-        location: String!
+        details: String!
+        images: [String!]
         date: String!
         maxAudience: Int!
         eventAdmin: User!
         tickets: [Ticket!]
+        price: Float!
     }
     type Ticket {
         id: ID!
@@ -35,7 +40,21 @@ export const typeDefs = gql`
         validity: Boolean! #if ticket is valid for use or not
         tradeStatus: TradeStatus! #if ticket is an original or a resale
     }
+    type Viewer {
+        id: ID
+        token: String
+        avatar: String
+        hasWallet: Boolean
+        didRequest: Boolean!
+    }
+    input LogInInput {
+        code: String!
+    }
     type Query {
-        getTickets: [Ticket!]
+        authUrl: String!
+    }
+    type Mutation {
+        logIn(input: LogInInput): Viewer!
+        logOut: Viewer!
     }
 `;

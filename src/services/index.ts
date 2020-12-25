@@ -1,1 +1,1 @@
-export * from './ticket.service';
+export * from './authentication.service';

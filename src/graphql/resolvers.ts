@@ -1,15 +1,28 @@
 import { IResolvers } from 'apollo-server-express';
 
-import { TicketService } from '../services';
+import { AuthenticationService } from '../services';
 
-import { Database, TicketEntity } from '../lib/types';
+import { Database, Viewer, LoginArgs } from '../lib/types';
 
-const ticketService = new TicketService();
+const authenticationService = new AuthenticationService();
 
 export const resolvers: IResolvers = {
     Query: {
-        getTickets: async (_root: undefined, _args: undefined, { db }: { db: Database }): Promise<TicketEntity[]> => {
-            return await ticketService.queryGetAllTickets({ db });
+        authUrl: () => authenticationService.queryGetGoogleAuthUrl(),
+    },
+    Mutation: {
+        logIn: async (_root: undefined, { input }: LoginArgs, { db }: { db: Database }): Promise<Viewer> => {
+            return await authenticationService.mutationLoginWithAuthCode({ input, db });
+        },
+        logOut: () => {
+            return 'logout';
+        },
+    },
+    // field resolvers
+    Viewer: {
+        id: (viewer: Viewer): string | undefined => viewer._id,
+        hasWallet: (viewer: Viewer): boolean | undefined => {
+            return viewer.walletId ? true : undefined;
         },
     },
 };
