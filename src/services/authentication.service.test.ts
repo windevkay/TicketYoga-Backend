@@ -1,0 +1,35 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require('dotenv').config();
+
+import { AuthenticationService } from './authentication.service';
+
+import { Database, Viewer } from '../lib/types';
+import { connectDatabase } from '../database';
+
+const authService = new AuthenticationService();
+
+describe('AUTH QUERIES', () => {
+    test('QueryGetGoogleAuthUrl returns a string', async () => {
+        const authURL = await authService.queryGetGoogleAuthUrl();
+        expect(typeof authURL).toBe('string');
+        expect(authURL).not.toBeUndefined();
+    });
+});
+
+describe('AUTH MUTATIONS', () => {
+    let db: Database;
+    beforeAll(async () => {
+        db = await connectDatabase();
+    });
+    afterAll(async () => {
+        await db.client.close();
+    });
+
+    test('MutationLogOut returns a Viewer', () => {
+        const logOutResult = authService.mutationLogOut();
+        const expectedResult: Viewer = { didRequest: true };
+        expect(logOutResult).toBeTruthy();
+        expect(logOutResult.didRequest).toEqual(true);
+        expect(logOutResult).toMatchObject(expectedResult);
+    });
+});

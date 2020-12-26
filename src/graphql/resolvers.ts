@@ -14,9 +14,7 @@ export const resolvers: IResolvers = {
         logIn: async (_root: undefined, { input }: LoginArgs, { db }: { db: Database }): Promise<Viewer> => {
             return await authenticationService.mutationLoginWithAuthCode({ input, db });
         },
-        logOut: () => {
-            return 'logout';
-        },
+        logOut: (): Viewer => authenticationService.mutationLogOut(),
     },
     // field resolvers
     Viewer: {

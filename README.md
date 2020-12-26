@@ -9,7 +9,9 @@ Resolvers call on service files where majority of code logic is domiciled.
 
 Jest is being used for testing of all individual services.
 
-Google OAuth is being used for as an outsourced service for user authentication
+Google OAuth is being used for as an outsourced service for user authentication.
+
+A google access and google refresh token is being saved with user entities for Google API requests.
 
 ## Available Scripts
 

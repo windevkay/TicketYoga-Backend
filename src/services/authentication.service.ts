@@ -12,7 +12,10 @@ export class AuthenticationService {
     public queryGetGoogleAuthUrl = (): Promise<string> => {
         return Promise.resolve(Google.authUrl());
     };
-
+    /**
+     * Mutation to handle user login via google or cookie
+     * @param params input(with google auth code string or null) , db
+     */
     public mutationLoginWithAuthCode = async (params: {
         input: { code: string } | null;
         db: Database;
@@ -40,7 +43,20 @@ export class AuthenticationService {
         }
         return Promise.resolve(viewer);
     };
-
+    /**
+     * Handles user Logout
+     */
+    public mutationLogOut = (): Viewer => {
+        try {
+            return { didRequest: true };
+        } catch (error) {
+            return new ErrorHelper().createNewError(ErrorType.ERROR_LOGGING_OUT);
+        }
+    };
+    /**
+     * Middleware to handle requesting user details from Google and either updating or creating db user
+     * @param params authcode from google, session token and db object
+     */
     private middlewareLoginViaGoogle = async (params: {
         authCode: string;
         token: string;
@@ -67,5 +83,38 @@ export class AuthenticationService {
         if (!userName || !userId || !userAvatar || !userEmail) {
             return new ErrorHelper().createNewError(ErrorType.GOOGLE_USER_ERROR);
         }
+        // if user is present in db, then update user
+        const updatedUserIfAny = await db.users.findOneAndUpdate(
+            { _id: userId },
+            {
+                $set: {
+                    name: userName,
+                    contact: userEmail,
+                    avatar: userAvatar,
+                    token,
+                    googleAccessToken,
+                    googleRefreshToken,
+                },
+            },
+            { returnOriginal: false },
+        );
+
+        let newOrUpdatedUser: UserEntity | undefined = updatedUserIfAny.value;
+        if (!newOrUpdatedUser) {
+            const newUser = await db.users.insertOne({
+                _id: userId,
+                token,
+                name: userName,
+                avatar: userAvatar,
+                contact: userEmail,
+                income: 0,
+                events: [],
+                tickets: [],
+                googleAccessToken,
+                googleRefreshToken,
+            });
+            newOrUpdatedUser = newUser.ops[0];
+        }
+        return Promise.resolve(newOrUpdatedUser);
     };
 }
