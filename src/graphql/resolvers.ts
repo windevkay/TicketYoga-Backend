@@ -1,4 +1,5 @@
 import { IResolvers } from 'apollo-server-express';
+import { Request, Response } from 'express';
 
 import { AuthenticationService } from '../services';
 
@@ -8,13 +9,18 @@ const authenticationService = new AuthenticationService();
 
 export const resolvers: IResolvers = {
     Query: {
-        authUrl: () => authenticationService.queryGetGoogleAuthUrl(),
+        authUrl: (): Promise<string> => authenticationService.queryGetGoogleAuthUrl(),
     },
     Mutation: {
-        logIn: async (_root: undefined, { input }: LoginArgs, { db }: { db: Database }): Promise<Viewer> => {
-            return await authenticationService.mutationLoginWithAuthCode({ input, db });
+        logIn: async (
+            _root: undefined,
+            { input }: LoginArgs,
+            { db, req, res }: { db: Database; req: Request; res: Response },
+        ): Promise<Viewer> => {
+            return await authenticationService.mutationLoginWithAuthCode({ input, db, req, res });
         },
-        logOut: (): Viewer => authenticationService.mutationLogOut(),
+        logOut: (_root: undefined, _args: undefined, { res }: { res: Response }): Viewer =>
+            authenticationService.mutationLogOut({ res }),
     },
     // field resolvers
     Viewer: {

@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { Response, Request } from 'express';
 
 import { LoginResponse, Viewer, Database, UserEntity } from '../lib/types';
 
@@ -6,6 +7,12 @@ import { ErrorHelper, ErrorType } from './helpers/Error.helper';
 import { Google } from './requests';
 
 export class AuthenticationService {
+    cookieOptions = {
+        httpOnly: true,
+        sameSite: true,
+        signed: true,
+        secure: process.env.NODE_ENV === 'development' ? false : true,
+    };
     /**
      * Returns the login URL required for Google OAUTH
      */
@@ -19,15 +26,17 @@ export class AuthenticationService {
     public mutationLoginWithAuthCode = async (params: {
         input: { code: string } | null;
         db: Database;
+        req: Request;
+        res: Response;
     }): Promise<Viewer> => {
-        const { input, db } = params;
+        const { input, db, req, res } = params;
         const authCode = input ? input.code : null;
         // generate user session token
         const token = crypto.randomBytes(16).toString('hex');
 
         const user: UserEntity | undefined = authCode
-            ? await this.middlewareLoginViaGoogle({ authCode, token, db })
-            : undefined;
+            ? await this.middlewareLoginViaGoogle({ authCode, token, db, res })
+            : await this.middlewareLoginViaCookie({ token, db, req, res });
 
         let viewer: Viewer;
         if (!user) {
@@ -45,9 +54,12 @@ export class AuthenticationService {
     };
     /**
      * Handles user Logout
+     * @param params express response object
      */
-    public mutationLogOut = (): Viewer => {
+    public mutationLogOut = (params: { res: Response }): Viewer => {
+        const { res } = params;
         try {
+            res.clearCookie('viewer', this.cookieOptions);
             return { didRequest: true };
         } catch (error) {
             return new ErrorHelper().createNewError(ErrorType.ERROR_LOGGING_OUT);
@@ -61,8 +73,9 @@ export class AuthenticationService {
         authCode: string;
         token: string;
         db: Database;
+        res: Response;
     }): Promise<UserEntity | undefined> => {
-        const { authCode, token, db } = params;
+        const { authCode, token, db, res } = params;
         const { user, googleAccessToken, googleRefreshToken }: LoginResponse = await Google.logIn(authCode);
         if (!user) {
             return new ErrorHelper().createNewError(ErrorType.GOOGLE_USER_ERROR);
@@ -115,6 +128,40 @@ export class AuthenticationService {
             });
             newOrUpdatedUser = newUser.ops[0];
         }
+        //set client cookie
+        res.cookie('viewer', userId, {
+            ...this.cookieOptions,
+            maxAge: 365 * 24 * 60 * 60 * 1000, //1 year expiry
+        });
+
         return Promise.resolve(newOrUpdatedUser);
+    };
+
+    private middlewareLoginViaCookie = async (params: {
+        token: string;
+        db: Database;
+        req: Request;
+        res: Response;
+    }): Promise<UserEntity | undefined> => {
+        const { token, db, req, res } = params;
+        try {
+            //find user and update their token information
+            const userUpdate = await db.users.findOneAndUpdate(
+                {
+                    _id: req.signedCookies.viewer,
+                },
+                { $set: { token } },
+                { returnOriginal: false },
+            );
+
+            const user = userUpdate.value;
+            //if there is no user, clear the cookie as we assume user is no longer available
+            if (!user) {
+                res.clearCookie('viewer', this.cookieOptions);
+            }
+            return Promise.resolve(user);
+        } catch (error) {
+            return new ErrorHelper().createNewError(ErrorType.COOKIE_LOGIN_ERROR);
+        }
     };
 }

@@ -3,6 +3,7 @@ require('dotenv').config();
 
 import express, { Application } from 'express';
 import { ApolloServer } from 'apollo-server-express';
+import cookieParser from 'cookie-parser';
 
 import { connectDatabase } from './database';
 import { resolvers, typeDefs } from './graphql';
@@ -11,7 +12,10 @@ const port = process.env.PORT;
 
 const mount = async (app: Application) => {
     const db = await connectDatabase();
-    const server = new ApolloServer({ resolvers, typeDefs, context: () => ({ db }) });
+    //apply other middlewares
+    app.use(cookieParser(process.env.COOKIE_SECRET));
+
+    const server = new ApolloServer({ resolvers, typeDefs, context: ({ req, res }) => ({ db, req, res }) });
 
     server.applyMiddleware({ app, path: '/api' });
 
