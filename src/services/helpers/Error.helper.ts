@@ -8,6 +8,8 @@ export enum ErrorType {
     //ERRORS RELATED TO LOGGING OUT OR COOKIES
     ERROR_LOGGING_OUT = 'ERROR_LOGGING_OUT',
     COOKIE_LOGIN_ERROR = 'COOKIE_LOGIN_ERROR',
+    //AUTHORIZATION ERRORS
+    AUTHORIZATION_ERROR = 'AUTHORIZATION_ERROR',
 }
 
 const ErrorMessages = {
@@ -16,6 +18,7 @@ const ErrorMessages = {
     GOOGLE_USER_ERROR: 'There was an error getting User Data from Google',
     ERROR_LOGGING_OUT: 'There was an error Logging Out of the App',
     COOKIE_LOGIN_ERROR: 'There was an error getting User via Cookie',
+    AUTHORIZATION_ERROR: 'There was an error Authorizing User action',
 };
 
 export class ErrorHelper {
