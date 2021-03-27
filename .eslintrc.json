@@ -4,11 +4,7 @@
         "ecmaVersion": 2018,
         "sourceType": "module"
     },
-    "extends": [
-        "plugin:@typescript-eslint/recommended",
-        "prettier/@typescript-eslint",
-        "plugin:prettier/recommended"
-    ],
+    "extends": ["plugin:@typescript-eslint/recommended", "prettier/@typescript-eslint", "plugin:prettier/recommended"],
     "env": { "node": true },
     "rules": {
         "indent": "off",
@@ -17,10 +13,10 @@
     },
     "overrides": [
         {
-          "files": ["*.js"],
-          "rules": {
-            "@typescript-eslint/no-var-requires": "off"
-          }
+            "files": ["*.js"],
+            "rules": {
+                "@typescript-eslint/no-var-requires": "off"
+            }
         }
     ]
 }

@@ -161,7 +161,7 @@ export class AuthenticationService {
             }
             return Promise.resolve(user);
         } catch (error) {
-            return new ErrorHelper().createNewError(ErrorType.COOKIE_LOGIN_ERROR);
+            return Promise.reject(new ErrorHelper().createNewError(ErrorType.COOKIE_LOGIN_ERROR));
         }
     };
 }

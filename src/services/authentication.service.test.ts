@@ -3,7 +3,7 @@ require('dotenv').config();
 
 import { AuthenticationService } from './authentication.service';
 
-import { Database, Viewer } from '../lib/types';
+import { Database } from '../lib/types';
 import { connectDatabase } from '../database';
 
 const authService = new AuthenticationService();
@@ -23,13 +23,5 @@ describe('AUTH MUTATIONS', () => {
     });
     afterAll(async () => {
         await db.client.close();
-    });
-
-    test('MutationLogOut returns a Viewer', () => {
-        const logOutResult = authService.mutationLogOut();
-        const expectedResult: Viewer = { didRequest: true };
-        expect(logOutResult).toBeTruthy();
-        expect(logOutResult.didRequest).toEqual(true);
-        expect(logOutResult).toMatchObject(expectedResult);
     });
 });
