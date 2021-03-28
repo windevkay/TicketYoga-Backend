@@ -10,6 +10,9 @@ export enum ErrorType {
     COOKIE_LOGIN_ERROR = 'COOKIE_LOGIN_ERROR',
     //AUTHORIZATION ERRORS
     AUTHORIZATION_ERROR = 'AUTHORIZATION_ERROR',
+    //USER ERRORS
+    ERROR_FINDING_USER = 'ERROR_FINDING_USER',
+    USER_NOT_FOUND = 'USER_NOT_FOUND',
 }
 
 const ErrorMessages = {
@@ -19,6 +22,8 @@ const ErrorMessages = {
     ERROR_LOGGING_OUT: 'There was an error Logging Out of the App',
     COOKIE_LOGIN_ERROR: 'There was an error getting User via Cookie',
     AUTHORIZATION_ERROR: 'There was an error Authorizing User action',
+    ERROR_FINDING_USER: 'There was an error retrieving this user',
+    USER_NOT_FOUND: 'User not found',
 };
 
 export class ErrorHelper {

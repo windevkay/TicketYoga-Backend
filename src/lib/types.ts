@@ -5,6 +5,10 @@ export interface LoginArgs {
     input: { code: string } | null;
 }
 
+export interface UserQueryArgs {
+    id: string;
+}
+
 export interface LoginResponse {
     user: people_v1.Schema$Person;
     googleAccessToken?: string;
@@ -48,6 +52,7 @@ export interface UserEntity {
     tickets: ObjectId[];
     googleAccessToken?: string;
     googleRefreshToken?: string;
+    authorized?: boolean;
 }
 
 export interface TicketEntity {

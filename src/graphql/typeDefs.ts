@@ -9,14 +9,23 @@ export const typeDefs = gql`
         ORIGINAL
         RESALE
     }
+    type Tickets {
+        total: Int!
+        result: [Ticket!]!
+    }
+    type Events {
+        total: Int!
+        result: [Event!]!
+    }
     type User {
         id: ID!
-        token: String!
         name: String!
         avatar: String!
         contact: String!
-        events: [Event!]
-        tickets: [Ticket!]
+        events(limit: Int!, page: Int!): Events!
+        tickets(limit: Int!, page: Int!): Tickets
+        hasWallet: Boolean!
+        income: Float
     }
     type Event {
         id: ID!
@@ -26,7 +35,6 @@ export const typeDefs = gql`
         date: String!
         maxAudience: Int!
         eventAdmin: User!
-        tickets: [Ticket!]
         price: Float!
     }
     type Ticket {
@@ -52,6 +60,7 @@ export const typeDefs = gql`
     }
     type Query {
         authUrl: String!
+        user(id: ID!): User!
     }
     type Mutation {
         logIn(input: LogInInput): Viewer!

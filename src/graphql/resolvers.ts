@@ -1,15 +1,23 @@
 import { IResolvers } from 'apollo-server-express';
 import { Request, Response } from 'express';
 
-import { AuthenticationService } from '../services';
+import { AuthenticationService, UserService } from '../services';
 
-import { Database, Viewer, LoginArgs } from '../lib/types';
+import { Database, Viewer, LoginArgs, UserQueryArgs, UserEntity } from '../lib/types';
 
 const authenticationService = new AuthenticationService();
+const userService = new UserService();
 
 export const resolvers: IResolvers = {
     Query: {
         authUrl: (): Promise<string> => authenticationService.queryGetGoogleAuthUrl(),
+        user: async (
+            _root: undefined,
+            { id }: UserQueryArgs,
+            { db, req }: { db: Database; req: Request },
+        ): Promise<UserEntity> => {
+            return await userService.queryUser({ id, db, req });
+        },
     },
     Mutation: {
         logIn: async (
